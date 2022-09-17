@@ -9,6 +9,8 @@ import { runMigrationCart, runMigrationCartProducts, runMigrationCategories, run
 import { getCategories } from './src/repository/category-repository';
 import { Product } from './src/classes/product';
 import { getProducts } from './src/repository/product-repository';
+import { Cart } from './src/classes/cart';
+import { createCart, getCart } from './src/repository/cart-repository';
 LogBox.ignoreAllLogs();
 
 export default function App() {
@@ -17,6 +19,8 @@ export default function App() {
 
   const [products, setProducts] = useState<Product[]>([])
   const [productsEdit, setProductsEdit] = useState<any>(undefined)
+
+  const [cart, setCart] = useState<Cart | null>(null)
 
   const providers = {
     categories,
@@ -27,7 +31,10 @@ export default function App() {
     products, 
     setProducts,
     productsEdit, 
-    setProductsEdit
+    setProductsEdit,
+
+    cart, 
+    setCart
   }
 
   let isAlreadyMigrated = false;
@@ -47,9 +54,21 @@ export default function App() {
   async function loadParamters() {
     let categories = await getCategories()
     let products = await getProducts()
+    let cartAux = await getCart()
+
+    let c = cartAux.filter(c => !c.is_finished)
+    console.log(c)
+    if(!c.length) {
+      await createCart()
+
+      cartAux = await getCart()
+
+      c = cartAux.filter(c => !c.is_finished)
+    }
 
     setCategories(categories)
     setProducts(products)
+    setCart(c[0])
   }
 
   useEffect(() => {

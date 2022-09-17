@@ -35,30 +35,28 @@ export function CartDBMapper(dbObject: any): Cart {
     }
 
     dbObject.forEach((db: any) => {
-        cart.cart_products?.push({
-            cart_id: db.cpcart_id,
-            product_id: db.cpproduct_id,
-            quantity: db.cpquantity,
-            id: db.cpid,
-            product: {
-                category_id: db.pcategory_id,
-                description: db.pdescription,
-                is_deleted: db.pis_deleted,
-                name: db.pname,
-                price: db.pprice,
-                id: db.pid,
-                category: {
-                    description: db.ctdescription,
-                    is_deleted: false,
-                    id: db.ctid
+        if(db.cpcart_id) {
+            cart.cart_products?.push({
+                cart_id: db.cpcart_id,
+                product_id: db.cpproduct_id,
+                quantity: db.cpquantity,
+                id: db.cpid,
+                product: {
+                    category_id: db.pcategory_id,
+                    description: db.pdescription,
+                    is_deleted: db.pis_deleted,
+                    name: db.pname,
+                    price: db.pprice,
+                    id: db.pid,
+                    category: {
+                        description: db.ctdescription,
+                        is_deleted: false,
+                        id: db.ctid
+                    }
                 }
-            }
-        })
+            })
+        }
     })
 
-    return {
-        id: dbObject.id,
-        created_at: moment(dbObject.created_at).toDate(),
-        is_finished: dbObject.is_deleted
-    }
+    return cart
 }

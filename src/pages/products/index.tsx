@@ -6,17 +6,12 @@ import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import ListProductsPage from './list';
 import CreateProductsPage from './create';
 
-const Page1 = () => <Text>aaaaa</Text>
-const Page2 = () => <Text>bbbbbb</Text>
-
-
 const Routes = createAppContainer(
   createSwitchNavigator({
     List: ListProductsPage,
     Create: CreateProductsPage,
   })
 );
-
 
 const ProductsPage = () => {
   return (
