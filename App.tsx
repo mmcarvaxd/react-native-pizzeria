@@ -1,14 +1,54 @@
-import * as React from 'react';
-import { DarkTheme, Provider as PaperProvider } from 'react-native-paper';
-
+import { Provider as PaperProvider } from 'react-native-paper';
+import AppContext from './src/services/app-context';
 import Main from './src/pages/main';
+import { useEffect, useState } from 'react';
+import { Category } from './src/classes/category';
 
+import { LogBox } from 'react-native';
+import { runMigrationCart, runMigrationCartProducts, runMigrationCategories, runMigrationProduct } from './src/repository/dbConnection';
+import { getCategories } from './src/repository/category-repository';
+LogBox.ignoreAllLogs();
 
 export default function App() {
+  const [categories, setCategories] = useState<Category[]>([])
+  const [categoryEdit, setCategoryEdit] = useState<any>(undefined)
+  const providers = {
+    categories,
+    setCategories,
+    categoryEdit, 
+    setCategoryEdit
+  }
+
+  let isAlreadyMigrated = false;
+
+  async function funcUseEffect() {
+    if (!isAlreadyMigrated) {
+      isAlreadyMigrated = true;
+      await runMigrationProduct();
+      await runMigrationCart();
+      await runMigrationCartProducts();
+      await runMigrationCategories();
+    }
+
+    await loadParamters()
+  }
+
+  async function loadParamters() {
+    let categories = await getCategories()
+
+    setCategories(categories)
+  }
+
+  useEffect(() => {
+    funcUseEffect();
+  }, []);
+
   return (
-    <PaperProvider>
-      <Main />
-    </PaperProvider>
+    <AppContext.Provider value={providers}>
+      <PaperProvider>
+        <Main />
+      </PaperProvider>
+    </AppContext.Provider>
   );
 }
 

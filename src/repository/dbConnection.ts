@@ -1,11 +1,11 @@
 import * as SQLite from 'expo-sqlite';
 
 export function getDbConnection() {
-    const cx = SQLite.openDatabase('dbPizzaria.db');
+    const cx = SQLite.openDatabase('dbPizzariaa.db');
     return cx;
 }
 
-export function runMigrations() {
+export function runMigrationProduct() {
     return new Promise((resolve, reject) => {
         const query = `
         CREATE TABLE IF NOT EXISTS tbProducts (
@@ -18,17 +18,74 @@ export function runMigrations() {
         
         );
         
+        `;
+
+        let dbCx = getDbConnection();
+        dbCx.transaction(tx => {
+            tx.executeSql(
+                query, [],
+                (tx, resultado) => { resolve(true); }
+            )
+        }, error => {
+            console.log(error);
+            resolve(false);
+        });
+    });
+}
+
+export function runMigrationCategories() {
+    return new Promise((resolve, reject) => {
+        const query = `
+        
         CREATE TABLE IF NOT EXISTS tbCategories (
             id integer not null primary key AUTOINCREMENT,
             description text not null,
             is_deleted boolean not null default false
         );
         
+        `;
+
+        let dbCx = getDbConnection();
+        dbCx.transaction(tx => {
+            tx.executeSql(
+                query, [],
+                (tx, resultado) => { resolve(true); }
+            )
+        }, error => {
+            console.log(error);
+            resolve(false);
+        });
+    });
+}
+
+export function runMigrationCart() {
+    return new Promise((resolve, reject) => {
+        const query = `
+        
         CREATE TABLE IF NOT EXISTS tbCart (
             id integer not null primary key AUTOINCREMENT,
             created_at DATE not null,
             is_finished boolean not null default false
         );
+        
+        `;
+
+        let dbCx = getDbConnection();
+        dbCx.transaction(tx => {
+            tx.executeSql(
+                query, [],
+                (tx, resultado) => { resolve(true); }
+            )
+        }, error => {
+            console.log(error);
+            resolve(false);
+        });
+    });
+}
+
+export function runMigrationCartProducts() {
+    return new Promise((resolve, reject) => {
+        const query = `
         
         CREATE TABLE IF NOT EXISTS tbCartProducts (
             id integer not null primary key AUTOINCREMENT,
@@ -43,7 +100,7 @@ export function runMigrations() {
         dbCx.transaction(tx => {
             tx.executeSql(
                 query, [],
-                (tx, resultado) => resolve(true)
+                (tx, resultado) => { resolve(true); }
             )
         }, error => {
             console.log(error);

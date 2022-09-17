@@ -3,7 +3,7 @@ import { BottomNavigation, Text } from 'react-native-paper';
 import CategoriesPage from '../categories';
 import ProductsPage from '../products';
 
-const ProductsRoute = () => <ProductsPage />;
+const ProductsRoute = (...props: any) => <ProductsPage {...props} />;
 
 const Main = (props: any) => {
     const [index, setIndex] = React.useState(0);

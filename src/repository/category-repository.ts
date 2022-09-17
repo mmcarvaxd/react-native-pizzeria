@@ -2,7 +2,7 @@ import { Category, CategoryDBMapper } from "../classes/category";
 import { execQuery } from "./dbConnection";
 
 export async function getCategories(): Promise<Category[]> {
-    const query = 'SELECT * FROM tbCategories;'
+    const query = 'SELECT * FROM tbCategories ORDER BY is_deleted ASC;'
     let response = await execQuery(query, [])
 
     let categories: Category[] = []
@@ -29,8 +29,8 @@ export async function updateCategory(category: Category): Promise<void> {
 }
 
 export async function deleteCategory(id: Number): Promise<void> {
-    const query = 'delete from tbCategories where id=?'
-    await execQuery(query, [id])
+    const query = 'update tbCategories set is_deleted=? where id=?'
+    await execQuery(query, [true, id])
     
     return
 }
