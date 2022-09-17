@@ -2,7 +2,7 @@ import { Product, ProductDBMapper } from "../classes/product";
 import { execQuery } from "./dbConnection";
 
 export async function getProducts(): Promise<Product[]> {
-    const query = 'SELECT * FROM tbProducts;'
+    const query = 'SELECT * FROM tbProducts ORDER BY is_deleted ASC;'
     let response = await execQuery(query, [])
 
     let products: Product[] = []
@@ -29,8 +29,8 @@ export async function updateProduct(product: Product): Promise<void> {
 }
 
 export async function deleteProduct(id: Number): Promise<void> {
-    const query = 'delete from tbProducts where id=?'
-    await execQuery(query, [id])
+    const query = 'update tbProducts set is_deleted=? where id=?'
+    await execQuery(query, [true, id])
     
     return
 }

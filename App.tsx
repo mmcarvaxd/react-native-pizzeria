@@ -7,16 +7,27 @@ import { Category } from './src/classes/category';
 import { LogBox } from 'react-native';
 import { runMigrationCart, runMigrationCartProducts, runMigrationCategories, runMigrationProduct } from './src/repository/dbConnection';
 import { getCategories } from './src/repository/category-repository';
+import { Product } from './src/classes/product';
+import { getProducts } from './src/repository/product-repository';
 LogBox.ignoreAllLogs();
 
 export default function App() {
   const [categories, setCategories] = useState<Category[]>([])
   const [categoryEdit, setCategoryEdit] = useState<any>(undefined)
+
+  const [products, setProducts] = useState<Product[]>([])
+  const [productsEdit, setProductsEdit] = useState<any>(undefined)
+
   const providers = {
     categories,
     setCategories,
     categoryEdit, 
-    setCategoryEdit
+    setCategoryEdit,
+
+    products, 
+    setProducts,
+    productsEdit, 
+    setProductsEdit
   }
 
   let isAlreadyMigrated = false;
@@ -35,8 +46,10 @@ export default function App() {
 
   async function loadParamters() {
     let categories = await getCategories()
+    let products = await getProducts()
 
     setCategories(categories)
+    setProducts(products)
   }
 
   useEffect(() => {
