@@ -9,7 +9,7 @@ import styles from './styles';
 
 
 const CartPage = () => {
-  const { cart, setCart } = useContext(AppContext);
+  const { cart, setCart, setCarts } = useContext(AppContext);
 
   async function removeFromCart(cartProduct: CartProduct) {
     await removeProduct(cartProduct.id || 0)
@@ -42,6 +42,7 @@ const CartPage = () => {
     let cartAux = await getCart()
 
     let c = cartAux.filter(c => !c.is_finished)
+    setCarts(cartAux)
     setCart(c[0])
   }
 
@@ -56,17 +57,18 @@ const CartPage = () => {
   return (
     <View>
       <Header title='Carrinho'></Header>
-      <View style={{ width: '100%' }}>
+      <View style={{height: '100%'}}>
         <Appbar style={styles.totalContainer} theme={{ colors: { primary: '#6c5ce7' } }}>
-          <Text style={{color: 'white'}}>Total: R$ {total.toFixed(2).toString()}</Text>
+          <Text style={{ color: 'white' }}>Total: R$ {total.toFixed(2).toString()}</Text>
           <Button color='white' icon="cart-check" disabled={!cart.cart_products?.length} onPress={() => { finalizeCart() }}>
             Finalizar
           </Button>
         </Appbar>
         <ScrollView>
           {
-            cart.cart_products?.length ? cart.cart_products?.map((cp: CartProduct) => (
+            cart.cart_products?.length ? cart.cart_products?.map((cp: CartProduct, index: number) => (
               <List.Item
+                key={index}
                 title={cp.product?.name}
                 description={cp.product?.description}
                 left={_ => <IconButton
@@ -77,20 +79,20 @@ const CartPage = () => {
                 />}
 
                 right={_ => (
-                <View style={styles.alignButtons}>
-                  <IconButton
-                    icon="minus"
-                    size={20}
-                    disabled={cp.quantity === 1}
-                    onPress={() => removeProductQuantityy(cp)}
-                  />
-                  <Text>{cp.quantity}</Text>
-                  <IconButton
-                    icon="plus"
-                    size={20}
-                    onPress={() => addProductQuantityy(cp)}
-                  />
-                </View>
+                  <View style={styles.alignButtons}>
+                    <IconButton
+                      icon="minus"
+                      size={20}
+                      disabled={cp.quantity === 1}
+                      onPress={() => removeProductQuantityy(cp)}
+                    />
+                    <Text>{cp.quantity}</Text>
+                    <IconButton
+                      icon="plus"
+                      size={20}
+                      onPress={() => addProductQuantityy(cp)}
+                    />
+                  </View>
                 )}
               />
             )) : <List.Subheader>Nenhuma produto no carrinho :(</List.Subheader>

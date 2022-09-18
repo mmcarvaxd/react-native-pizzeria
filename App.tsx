@@ -21,6 +21,7 @@ export default function App() {
   const [productsEdit, setProductsEdit] = useState<any>(undefined)
 
   const [cart, setCart] = useState<Cart | null>(null)
+  const [carts, setCarts] = useState<Cart[]>([])
 
   const providers = {
     categories,
@@ -34,7 +35,10 @@ export default function App() {
     setProductsEdit,
 
     cart, 
-    setCart
+    setCart,
+
+    carts, 
+    setCarts
   }
 
   let isAlreadyMigrated = false;
@@ -69,6 +73,7 @@ export default function App() {
     setCategories(categories)
     setProducts(products)
     setCart(c[0])
+    setCarts(cartAux)
   }
 
   useEffect(() => {
