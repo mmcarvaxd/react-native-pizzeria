@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { Button, Card, FAB, List, Paragraph, Text, Title } from 'react-native-paper';
 import { CartProduct } from '../../../classes/cart';
@@ -7,11 +7,15 @@ import { addProduct, getCart } from '../../../repository/cart-repository';
 import { deleteProduct, getProducts } from '../../../repository/product-repository';
 import AppContext from '../../../services/app-context';
 import styles from './styles';
+import DropDown from "react-native-paper-dropdown";
+import { Category } from '../../../classes/category';
 
 const ListProductsPage = ({ navigation }: any) => {
-  const { products, setProducts, setProductsEdit, cart, setCart } = useContext(AppContext);
+  const { products, setProducts, setProductsEdit, cart, setCart, categories } = useContext(AppContext);
+  const [ showDropDown, setShowDropDown ] = useState(false);
+  const [ category, setCategory ] = useState<number>(0)
 
-  let productNotExcluded: Product[] = products.filter((p: Product) => !p.is_deleted)
+  let productNotExcluded: Product[] = products.filter((p: Product) => (!p.is_deleted && (!category || p.category_id === category)))
 
   async function remove(product: Product) {
     await deleteProduct(product.id || 0)
@@ -27,9 +31,33 @@ const ListProductsPage = ({ navigation }: any) => {
     setCart(c[0])
   }
 
+  const categoryList: any[] = [{
+    value: 0,
+    label: "Todos"
+  }];
+
+  categories.forEach((c: Category) => {
+    !c.is_deleted ? categoryList.push({
+      value: c.id,
+      label: c.description
+    }) : null
+  })
+
   return (
     <View style={{ height: '100%' }}>
-      <ScrollView>
+      <ScrollView style={{ height: '100%' }}>
+        <List.Subheader>Filtro</List.Subheader>
+        <DropDown
+          label={"Categoria"}
+          mode={"flat"}
+          visible={showDropDown}
+          showDropDown={() => setShowDropDown(true)}
+          onDismiss={() => setShowDropDown(false)}
+          value={category}
+          setValue={setCategory}
+          list={categoryList}
+        />
+        <List.Subheader>Produtos</List.Subheader>
         {productNotExcluded.length ? productNotExcluded.map((p: Product, index: number) => (
           <Card key={index} style={styles.marginTop10}>
             <Card.Content>
@@ -50,7 +78,10 @@ const ListProductsPage = ({ navigation }: any) => {
               </Button>
             </Card.Actions>
           </Card>
-        )) : <List.Subheader>Nenhuma Categoria Cadastrada</List.Subheader>}
+        )) : <List.Subheader>Nenhum Produto Cadastrado</List.Subheader>}
+
+        <View style={{ height: 300 }}>
+        </View>
       </ScrollView>
       <FAB
         style={styles.fab}

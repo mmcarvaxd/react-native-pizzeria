@@ -1,9 +1,15 @@
 import { Product, ProductDBMapper } from "../classes/product";
 import { execQuery } from "./dbConnection";
 
-export async function getProducts(): Promise<Product[]> {
-    const query = 'SELECT * FROM tbProducts ORDER BY is_deleted ASC;'
-    let response = await execQuery(query, [])
+export async function getProducts(filter?: number): Promise<Product[]> {
+    let query = 'SELECT * FROM tbProducts'
+    
+    if(filter) {
+        query += ' WHERE category_id=? '
+    }
+
+    query += ' ORDER BY category_id ASC, is_deleted ASC;'
+    let response = await execQuery(query, filter ? [filter] : [])
 
     let products: Product[] = []
 
